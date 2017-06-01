@@ -9,6 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderStore extends EventStore<UUID, OrderedProduct> {
-    List<OrderedProduct> byUser(User user, Instant fromWhenOn);
+    List<OrderedProduct> byUser(User user, Instant fromWhenOn);     // TODO: We should rather reference the users id...
     List<OrderedProduct> byUser(int userId, Instant fromWhenOn);
 }

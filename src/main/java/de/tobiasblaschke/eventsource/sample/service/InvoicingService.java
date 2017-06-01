@@ -43,7 +43,7 @@ public class InvoicingService extends EventSourceService<UUID, Invoice> implemen
 
     }
 
-    public List<Invoice> byUser(User user) {
+    public List<Invoice> byUser(User user) { // TODO: Would we really request this kind of info through the service? ... rather through the store
         return invoiceStore.byUser(user, Instant.MIN);
     }
 }

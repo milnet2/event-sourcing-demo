@@ -18,6 +18,8 @@ import java.util.stream.Stream;
 /**
  *  Allows listening for events on storing them.
  *  Dispatch them to the "real" store by listening for them
+ *
+ *  TODO: Declutter
  */
 public class ListenableEventStore implements EventStore {
     private final List<EventWiring<?, ?>> wiring;
@@ -205,7 +207,7 @@ class EventWiring<I, P> {
     }
 }
 
-class ServiceWiring<I, P, E extends Event<I, P>> extends EventWiring<I, P> {
+class ServiceWiring<I, P, E extends Event<I, P>> extends EventWiring<I, P> {    // TODO: Evil hack - a service is not an EventStore
     final Class<E> eventType;
 
     public ServiceWiring(Class<E> eventType, EventListener<E> handler) {

@@ -18,7 +18,7 @@ public class UserChangedEmail extends AbstractUserEvent {
         assert previous.isPresent();
         return previous
                 .map(prev ->
-                        new User(prev.getUserId(), prev.getGivenName(), prev.getSurname(), email));
+                        new User(prev.getUserId(), prev.getGivenName(), prev.getSurname(), email)); // TODO: There aught to be a better way!
 
     }
 }

@@ -9,6 +9,7 @@ import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventSourceService;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventStoreInMemory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 public class EventSourcingTest {
 
@@ -62,6 +64,11 @@ public class EventSourcingTest {
 
             assertEquals("John", users.get(1, atSomePoint.plus(1, ChronoUnit.MINUTES)).get().getGivenName());
         }
+    }
 
+    @Ignore
+    @Test
+    public void shouldHandleSnapshots() {
+        fail("Implement");
     }
 }

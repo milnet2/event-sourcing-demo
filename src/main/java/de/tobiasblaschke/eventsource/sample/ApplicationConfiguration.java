@@ -13,7 +13,7 @@ import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventStoreInMemory;
 import de.tobiasblaschke.eventsource.scaffolding.impl.ListenableEventStore;
 
-public enum ApplicationConfiguration {
+public enum ApplicationConfiguration {  // TODO: This ist not good at all - in a test we can end up with the wrong instances
     INSTANCE;
 
     final ListenableEventStore dispatcher;

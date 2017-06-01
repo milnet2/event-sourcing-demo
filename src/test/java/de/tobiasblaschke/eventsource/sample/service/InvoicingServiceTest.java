@@ -64,7 +64,7 @@ public class InvoicingServiceTest extends TestBase {
     public void shouldNotReactToEmailUpdatesAfterInvoiceWasSent() throws Exception {
         final State state = new State();
         final InvoicingService invoicing = new InvoicingService(state.getInvoices(), state.getOrders());
-        final UUID invoiceId = UUID.randomUUID();
+        final UUID invoiceId = UUID.randomUUID(); // TODO: Shouldn't be generated here
 
         replay(state,
                 new UserCreated(john, onceUponATime),

@@ -26,7 +26,7 @@ public class TestBase {
         private final InvoicingService invoiceService;
         private final UserService userService;
 
-        public State() {
+        public State() { // TODO: This tangles up with ApplicationConfiguration
             this.invoices = new InvoiceStoreInMemory();
             this.orders = new OrderStoreInMemory();
             this.users = new EventStoreInMemory<>(User.class);

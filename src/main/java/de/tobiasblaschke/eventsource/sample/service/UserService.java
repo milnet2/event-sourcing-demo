@@ -1,6 +1,5 @@
 package de.tobiasblaschke.eventsource.sample.service;
 
-import de.tobiasblaschke.eventsource.sample.domain.Invoice;
 import de.tobiasblaschke.eventsource.sample.domain.OrderedProduct;
 import de.tobiasblaschke.eventsource.sample.domain.User;
 import de.tobiasblaschke.eventsource.sample.events.UserDeleted;
