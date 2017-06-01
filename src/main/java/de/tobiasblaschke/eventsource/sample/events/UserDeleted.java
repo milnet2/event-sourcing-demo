@@ -1,6 +1,8 @@
 package de.tobiasblaschke.eventsource.sample.events;
 
 import de.tobiasblaschke.eventsource.sample.domain.User;
+import de.tobiasblaschke.eventsource.scaffolding.EventStore;
+import de.tobiasblaschke.eventsource.scaffolding.events.RevertEvent;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -18,8 +20,8 @@ public class UserDeleted extends AbstractUserEvent {
         return Optional.empty();
     }
 
-    public UserCreated makeInverse() {
-        return new UserCreated(user, getEventTimestamp());
+    public RevertEvent<Integer, User, UserDeleted> makeInverse(final EventStore<Integer, User> store, final Instant eventTimestamp) {
+        return new RevertEvent<>(this, store, eventTimestamp);
     }
 
     public User getUser() {

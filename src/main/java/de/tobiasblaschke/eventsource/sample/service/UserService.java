@@ -24,7 +24,7 @@ public class UserService extends EventSourceService<Integer, User> implements Ev
     public void onEvent(UserDeleted event) {
         final List<OrderedProduct> usersInvoices = orders.byUser(event.getId(), Instant.MIN);
         if (! usersInvoices.isEmpty()) {
-            getStore().storeEvent(event.makeInverse());
+            getStore().storeEvent(event.makeInverse(getStore(), Instant.now()));
         }
     }
 }
