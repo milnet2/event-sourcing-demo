@@ -13,33 +13,61 @@ import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventStoreInMemory;
 import de.tobiasblaschke.eventsource.scaffolding.impl.ListenableEventStore;
 
-public enum ApplicationConfiguration {  // TODO: This ist not good at all - in a test we can end up with the wrong instances
-    INSTANCE;
+public interface ApplicationConfiguration {
+    enum DefaultApplicationConfiguration implements ApplicationConfiguration {
+        INSTANCE;
 
-    final ListenableEventStore dispatcher;
-    final InvoiceStoreInMemory invoices;
-    final OrderStoreInMemory orders;
-    final EventStoreInMemory<Integer, User> users;
-    final EventStoreInMemory<Integer, Product> products;
-    final EventStoreInMemory<Object, Object> deadLetter;
+        final ListenableEventStore dispatcher;
+        final InvoiceStore invoices;
+        final OrderStore orders;
+        final EventStore<Integer, User> users;
+        final EventStore<Integer, Product> products;
+        final EventStore<Object, Object> deadLetter;
 
-    final UserService userService;
-    final InvoicingService invoiceService;
+        final UserService userService;
+        final InvoicingService invoiceService;
 
-    ApplicationConfiguration() {
-        this.invoices = new InvoiceStoreInMemory();
-        this.orders = new OrderStoreInMemory();
-        this.users = new EventStoreInMemory<>(User.class);
-        this.products = new EventStoreInMemory<>(Product.class);
-        this.deadLetter = new EventStoreInMemory<>(Object.class);
+        DefaultApplicationConfiguration() {
+            this.invoices = new InvoiceStoreInMemory();
+            this.orders = new OrderStoreInMemory();
+            this.users = new EventStoreInMemory<>(User.class);
+            this.products = new EventStoreInMemory<>(Product.class);
+            this.deadLetter = new EventStoreInMemory<>(Object.class);
 
-        this.invoiceService = new InvoicingService(invoices, orders);
-        this.userService = new UserService(users, orders);
+            this.invoiceService = new InvoicingService(invoices, orders);
+            this.userService = new UserService(users, orders);
 
-        this.dispatcher = buildWiring(invoices, orders, users, products, deadLetter, userService, invoiceService);
+            this.dispatcher = buildWiring(invoices, orders, users, products, deadLetter, userService, invoiceService);
+        }
+
+        public ListenableEventStore getDispatcher() {
+            return dispatcher;
+        }
+
+        public InvoiceStore getInvoices() {
+            return invoices;
+        }
+
+        public OrderStore getOrders() {
+            return orders;
+        }
+
+        public EventStore<Integer, User> getUsers() {
+            return users;
+        }
+
+        public EventStore<Integer, Product> getProducts() {
+            return products;
+        }
+
+        public EventStore<Object, Object> getDeadLetter() {
+            return deadLetter;
+        }
     }
 
-    public ListenableEventStore buildWiring(InvoiceStore invoices, OrderStore orders, EventStore<Integer, User> users,
+    // TODO: Super pretty... static would be even worse
+    // I trait would be nice...
+    default ListenableEventStore buildWiring(InvoiceStore invoices, OrderStore orders, EventStore<Integer, User> users,
                                             EventStore<Integer, Product> products, EventStore deadLetter,
                                             UserService userService, InvoicingService invoiceService) {
          return ListenableEventStore.builder()
@@ -48,10 +76,7 @@ public enum ApplicationConfiguration {  // TODO: This ist not good at all - in a
                 .wire(InvoiceSent.class, invoices)
                 .wire(PriceChanged.class, products)
                 .wire(ProductAdded.class, products)
-                .wire(UserChangedName.class, users)
-                .wire(UserCreated.class, users)
-                .wire(UserDeleted.class, users)
-                .wire(UserChangedEmail.class, users)
+                .wire(AbstractUserEvent.class, users)
 
                  // Services
                  .wire(UserDeleted.class, userService)
@@ -61,27 +86,15 @@ public enum ApplicationConfiguration {  // TODO: This ist not good at all - in a
                 .build();
     }
 
-    public ListenableEventStore getDispatcher() {
-        return dispatcher;
-    }
+    ListenableEventStore getDispatcher();
 
-    public InvoiceStoreInMemory getInvoices() {
-        return invoices;
-    }
+    InvoiceStore getInvoices();
 
-    public OrderStoreInMemory getOrders() {
-        return orders;
-    }
+    OrderStore getOrders();
 
-    public EventStoreInMemory<Integer, User> getUsers() {
-        return users;
-    }
+    EventStore<Integer, User> getUsers();
 
-    public EventStoreInMemory<Integer, Product> getProducts() {
-        return products;
-    }
+    EventStore<Integer, Product> getProducts();
 
-    public EventStoreInMemory<Object, Object> getDeadLetter() {
-        return deadLetter;
-    }
+    EventStore<Object, Object> getDeadLetter();
 }

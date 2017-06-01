@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.util.Arrays;
 
 public class TestBase {
-    protected static class State {
+    protected static class State implements ApplicationConfiguration {
         final ListenableEventStore dispatcher;
         final InvoiceStoreInMemory invoices;
         final OrderStoreInMemory orders;
@@ -26,7 +26,7 @@ public class TestBase {
         private final InvoicingService invoiceService;
         private final UserService userService;
 
-        public State() { // TODO: This tangles up with ApplicationConfiguration
+        public State() {
             this.invoices = new InvoiceStoreInMemory();
             this.orders = new OrderStoreInMemory();
             this.users = new EventStoreInMemory<>(User.class);
@@ -36,7 +36,7 @@ public class TestBase {
             this.invoiceService = new InvoicingService(invoices, orders);
             this.userService = new UserService(users, orders);
 
-            this.dispatcher = ApplicationConfiguration.INSTANCE.buildWiring(
+            this.dispatcher = buildWiring(
                     invoices, orders, users, products, deadLetter,
                     userService, invoiceService);
         }
