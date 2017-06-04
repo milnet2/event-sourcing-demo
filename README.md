@@ -12,6 +12,7 @@ Some info about the implementation:
 * Business-logic in services:
     - "Disallowed events" are persisted as well
     - These events are reverted immediately
+    - Unfortunately, this way you can get a glimpse at wrong data
 * Snapshots are prepared, but not actually generated for now
 * Events are somewhat separate from actual payload data
 
