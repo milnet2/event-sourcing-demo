@@ -23,4 +23,12 @@ public class UserChangedName extends AbstractUserEvent {
                     new User(prev.getUserId(), givenName, surname, prev.getEmail()));   // TODO: There aught to be a better way
 
     }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
 }

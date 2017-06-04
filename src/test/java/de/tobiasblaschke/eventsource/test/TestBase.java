@@ -7,6 +7,7 @@ import de.tobiasblaschke.eventsource.sample.persistence.inmemory.InvoiceStoreInM
 import de.tobiasblaschke.eventsource.sample.persistence.inmemory.OrderStoreInMemory;
 import de.tobiasblaschke.eventsource.sample.service.InvoicingService;
 import de.tobiasblaschke.eventsource.sample.service.UserService;
+import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventStoreInMemory;
 import de.tobiasblaschke.eventsource.scaffolding.impl.ListenableEventStore;
@@ -19,7 +20,7 @@ public class TestBase {
         final ListenableEventStore dispatcher;
         final InvoiceStoreInMemory invoices;
         final OrderStoreInMemory orders;
-        final EventStoreInMemory<Integer, User> users;
+        final EventStore<Integer, User> users;
         final EventStoreInMemory<Integer, Product> products;
         final EventStoreInMemory<Object, Object> deadLetter;
 
@@ -36,7 +37,7 @@ public class TestBase {
             this.invoiceService = new InvoicingService(invoices, orders);
             this.userService = new UserService(users, orders);
 
-            this.dispatcher = buildWiring(
+            this.dispatcher = ApplicationConfiguration.buildWiring(
                     invoices, orders, users, products, deadLetter,
                     userService, invoiceService);
         }
@@ -49,7 +50,7 @@ public class TestBase {
             return orders;
         }
 
-        public EventStoreInMemory<Integer, User> getUsers() {
+        public EventStore<Integer, User> getUsers() {
             return users;
         }
 

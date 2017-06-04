@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0">
+
+    <persistence-unit name="mnf-pu-test" transaction-type="RESOURCE_LOCAL">
+
+        <!-- add classes -->
+        <class>de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities.JpaUserChangedEmail</class>
+        <class>de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities.JpaUserChangedName</class>
+        <class>de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities.JpaUserCreated</class>
+        <class>de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities.JpaUserDeleted</class>
+        <class>de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities.JpaUserSnapshot</class>
+
+        <properties>
+            <!-- Configuring JDBC properties -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;"/>
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+
+            <!-- Hibernate properties -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.show_sql" value="true"/>
+
+        </properties>
+    </persistence-unit>
+
+</persistence>

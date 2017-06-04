@@ -32,7 +32,7 @@ public class EventSourceService<I, P> {
     private Optional<P> replay(final Optional<P> initial, final List<Event<I, P>> log, final Instant atTime) {
         return leftFold(initial,
                 log.stream()
-                        .filter(entry -> entry.getEventTimestamp().isBefore(atTime))
+                        .filter(entry -> entry.getEventTimestamp().compareTo(atTime) <= 0)
                         .sorted(Comparator.comparing(event -> event.getEventTimestamp())))
                 ;
     }

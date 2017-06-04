@@ -18,4 +18,8 @@ public class UserCreated extends AbstractUserEvent {
         assert ! previous.isPresent();
         return Optional.of(user);
     }
+
+    public User getUser() {
+        return user;
+    }
 }

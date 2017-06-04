@@ -7,6 +7,7 @@ import de.tobiasblaschke.eventsource.sample.persistence.InvoiceStore;
 import de.tobiasblaschke.eventsource.sample.persistence.OrderStore;
 import de.tobiasblaschke.eventsource.sample.persistence.inmemory.InvoiceStoreInMemory;
 import de.tobiasblaschke.eventsource.sample.persistence.inmemory.OrderStoreInMemory;
+import de.tobiasblaschke.eventsource.sample.persistence.sql.JpaConnection;
 import de.tobiasblaschke.eventsource.sample.service.InvoicingService;
 import de.tobiasblaschke.eventsource.sample.service.UserService;
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
@@ -28,9 +29,11 @@ public interface ApplicationConfiguration {
         final InvoicingService invoiceService;
 
         DefaultApplicationConfiguration() {
+            final JpaConnection jpa = new JpaConnection();
+
             this.invoices = new InvoiceStoreInMemory();
             this.orders = new OrderStoreInMemory();
-            this.users = new EventStoreInMemory<>(User.class);
+            this.users = jpa.getUsers();
             this.products = new EventStoreInMemory<>(Product.class);
             this.deadLetter = new EventStoreInMemory<>(Object.class);
 
@@ -67,7 +70,7 @@ public interface ApplicationConfiguration {
 
     // TODO: Super pretty... static would be even worse
     // I trait would be nice...
-    default ListenableEventStore buildWiring(InvoiceStore invoices, OrderStore orders, EventStore<Integer, User> users,
+    static ListenableEventStore buildWiring(InvoiceStore invoices, OrderStore orders, EventStore<Integer, User> users,
                                             EventStore<Integer, Product> products, EventStore deadLetter,
                                             UserService userService, InvoicingService invoiceService) {
          return ListenableEventStore.builder()

@@ -8,11 +8,13 @@ import java.time.Instant;
 import java.util.Optional;
 
 public class UserDeleted extends AbstractUserEvent {
-    final User user;
+
+    public UserDeleted(int userId, Instant eventTimestamp) {
+        super(userId, eventTimestamp);
+    }
 
     public UserDeleted(User user, Instant eventTimestamp) {
-        super(user.getUserId(), eventTimestamp);
-        this.user = user;
+        this(user.getUserId(), eventTimestamp);
     }
 
     @Override
@@ -22,9 +24,5 @@ public class UserDeleted extends AbstractUserEvent {
 
     public RevertEvent<Integer, User, UserDeleted> makeInverse(final EventStore<Integer, User> store, final Instant eventTimestamp) {
         return new RevertEvent<>(this, store, eventTimestamp);
-    }
-
-    public User getUser() {
-        return user;
     }
 }

@@ -122,7 +122,7 @@ public class ListenableEventStore implements EventStore {
         return null;
     }
 
-    @Deprecated // Dangerous! There may be multiple snapshots from different handlers if the id is not unique across them
+    @Deprecated // Dangerous! There may be multiple snapshots from different handlers if the eventId is not unique across them
     public <I, P> Optional<Snapshot<I, P>> getSnapshotFor(final I id, final Instant atTime, final Class<P> payloadType) {
         return handlersForSnapshot(id, payloadType)
                 .map(handler -> handler.getSnapshotFor(id, atTime))
