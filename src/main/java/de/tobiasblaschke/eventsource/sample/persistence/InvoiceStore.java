@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface InvoiceStore extends EventStore<UUID, Invoice> {
+    @Deprecated
     List<Invoice> byUser(User user, Instant fromWhenOn);    // TODO: We should rather reference the users ID
     List<Invoice> byUser(int userId, Instant fromWhenOn);
 }

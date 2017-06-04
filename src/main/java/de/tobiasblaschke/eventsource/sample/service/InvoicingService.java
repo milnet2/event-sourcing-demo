@@ -32,7 +32,7 @@ public class InvoicingService extends EventSourceService<UUID, Invoice> implemen
         final List<Product> notInvoiced = usersOrders.stream()
                 .filter(order -> ! usersInvoices.stream().anyMatch(
                         invoice -> invoice.getProducts().contains(order.getProduct())))
-                .map(OrderedProduct::getProduct) // TODO: Will this correctly reflect price-changes?
+                .map(OrderedProduct::getProduct)
                 .collect(Collectors.toList());
 
         return new Invoice(buyer, notInvoiced, 0);
