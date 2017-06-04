@@ -4,8 +4,9 @@ Incomplete implementation of a shop. Just me tinkering around with Event
 Sourcing.
 
 Some info about the implementation:
+* Written in Java (Maven)
 * There's _no_ UI, just tests
-* No library used
+* No Event-Sourcing library used
 * Events in memory or persisted to SQL-Database (JPA, Hibernate, H2)
 * Not necessarily the "correct way" of doing things
 * Business-logic in services:
