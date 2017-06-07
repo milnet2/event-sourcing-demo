@@ -1,7 +1,7 @@
 package de.tobiasblaschke.eventsource.scaffolding;
 
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
-import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
+import de.tobiasblaschke.eventsource.scaffolding.domain.Snapshot;
 
 import java.time.Instant;
 import java.util.List;

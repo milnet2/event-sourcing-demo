@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import de.tobiasblaschke.eventsource.scaffolding.EventListener;
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
-import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
+import de.tobiasblaschke.eventsource.scaffolding.domain.Snapshot;
 
 import javax.annotation.Nullable;
 import java.time.Instant;

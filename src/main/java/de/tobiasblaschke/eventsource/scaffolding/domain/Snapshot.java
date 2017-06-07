@@ -1,4 +1,4 @@
-package de.tobiasblaschke.eventsource.scaffolding.events;
+package de.tobiasblaschke.eventsource.scaffolding.domain;
 
 import java.time.Instant;
 import java.util.Optional;

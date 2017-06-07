@@ -3,7 +3,7 @@ package de.tobiasblaschke.eventsource.scaffolding.impl;
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.InconsistencyService;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
-import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
+import de.tobiasblaschke.eventsource.scaffolding.domain.Snapshot;
 
 import java.time.Instant;
 import java.util.*;
@@ -39,7 +39,7 @@ public class EventSourceService<I, P> {
         return replay(initialData, events, atTime);
     }
 
-    private Optional<P> replay(final Optional<P> initial, final List<Event<I, P>> log, final Instant atTime) {
+    protected Optional<P> replay(final Optional<P> initial, final List<Event<I, P>> log, final Instant atTime) {
         return leftFold(initial,
                 log.stream()
                         .filter(entry -> entry.getEventTimestamp().compareTo(atTime) <= 0)

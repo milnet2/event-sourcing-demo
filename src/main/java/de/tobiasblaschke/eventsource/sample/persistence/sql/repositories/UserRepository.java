@@ -5,7 +5,7 @@ import de.tobiasblaschke.eventsource.sample.events.*;
 import de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities.*;
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
-import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
+import de.tobiasblaschke.eventsource.scaffolding.domain.Snapshot;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

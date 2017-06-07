@@ -1,6 +1,6 @@
 package de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities;
 
-import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
+import de.tobiasblaschke.eventsource.scaffolding.domain.Snapshot;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;

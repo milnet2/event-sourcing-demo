@@ -1,7 +1,7 @@
 package de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities;
 
 import de.tobiasblaschke.eventsource.sample.domain.User;
-import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
+import de.tobiasblaschke.eventsource.scaffolding.domain.Snapshot;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.persistence.*;

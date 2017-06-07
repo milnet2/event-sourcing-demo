@@ -4,7 +4,7 @@ import de.tobiasblaschke.eventsource.sample.domain.Invoice;
 import de.tobiasblaschke.eventsource.sample.domain.User;
 import de.tobiasblaschke.eventsource.sample.persistence.InvoiceStore;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
-import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
+import de.tobiasblaschke.eventsource.scaffolding.domain.Snapshot;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventStoreInMemory;
 
 import java.time.Instant;
