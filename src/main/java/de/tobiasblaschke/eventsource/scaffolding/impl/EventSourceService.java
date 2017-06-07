@@ -9,6 +9,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ *  Replays a sequence of events in order to produce the value of a payload P at
+ *  a given point in time.
+ *
+ *  @param <I> Id of the events payload
+ *  @param <P> Type of the DTO attached to the event (like a User)
+ */
 public class EventSourceService<I, P> {
     final EventStore<I, P> store;
 

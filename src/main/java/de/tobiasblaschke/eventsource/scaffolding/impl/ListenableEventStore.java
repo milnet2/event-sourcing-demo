@@ -157,7 +157,12 @@ public class ListenableEventStore implements EventStore {
 }
 
 
-
+/**
+ *  References an EventStore to be notified/queried for an event.
+ *
+ *  @param <I> Id of the events payload
+ *  @param <P> Type of the DTO attached to the event (like a User)
+ */
 class EventWiring<I, P> {
     final Class<? extends Event<I, P>> eventType;
     final Class<I> idType;
@@ -207,6 +212,13 @@ class EventWiring<I, P> {
     }
 }
 
+/**
+ *  References a service to be notified on occurrence of an Event of type E.
+ *
+ *  @param <I> Id of the events payload
+ *  @param <P> Type of the DTO attached to the event (like a User)
+ *  @param <E> Event to listen for
+ */
 class ServiceWiring<I, P, E extends Event<I, P>> extends EventWiring<I, P> {    // TODO: Evil hack - a service is not an EventStore
     final Class<E> eventType;
 
@@ -241,6 +253,9 @@ class ServiceWiring<I, P, E extends Event<I, P>> extends EventWiring<I, P> {    
     }
 }
 
+/**
+ *  Makes a service behave like an EventStore, that has no data in it.
+ */
 class ServiceAdapter<I, P, E extends Event<I, P>> implements EventStore<I, P> {
     final EventListener<E> delegate;
 

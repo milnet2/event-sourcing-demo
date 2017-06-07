@@ -7,6 +7,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ *  An Event that wraps an existing event to indicate, that its changes should be undone
+ *
+ *  @param <E> original event, that should be reverted
+ *  @param <I> Id of the events payload
+ *  @param <P> Type of the DTO attached to the event (like a User)
+ */
 public class RevertEvent<I, P, E extends Event<I, P>> implements Event<I, P> {
     private final E toBeReverted;
     private final EventStore<I, P> store;

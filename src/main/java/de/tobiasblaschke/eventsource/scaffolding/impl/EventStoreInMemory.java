@@ -9,6 +9,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ *  Keeps Events in Maps.
+ *
+ *  You'll need one store per payload type P.
+ *
+ *  @param <I> Id of the events payload
+ *  @param <P> Type of the DTO attached to the event (like a User)
+ */
 public class EventStoreInMemory<I, P> implements EventStore<I, P> {
     private Map<I, List<Event<I, P>>> events;
     private Map<I, Snapshot<I, P>> snapshots;  // There's only one snapshot in this implementation

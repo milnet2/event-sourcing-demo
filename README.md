@@ -29,6 +29,9 @@ Some info about the implementation:
 * A way of inconsistencies (due to eventual consistency) is required
     - For example a change to a user, that has been deleted
 
+You may find additional thoughts regarding the implementation in the
+Wiki (https://github.com/milnet2/event-sourcing-demo/wiki).
+
 ## About the db-persistence
 
 There's one table per event-payload-type, i.e. all user-events goto one
