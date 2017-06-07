@@ -2,6 +2,7 @@ package de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities;
 
 import com.google.common.base.Preconditions;
 import de.tobiasblaschke.eventsource.sample.domain.User;
+import de.tobiasblaschke.eventsource.sample.events.EventFactory;
 import de.tobiasblaschke.eventsource.sample.events.UserChangedEmail;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -34,9 +35,9 @@ public class JpaUserChangedEmail extends AbstractJpaUserEvent {
     }
 
     @Override
-    public UserChangedEmail unbox() {
+    public UserChangedEmail unbox(EventFactory factory) {
         Preconditions.checkNotNull(email);
 
-        return new UserChangedEmail(id, email, eventTimestamp);
+        return factory.userChangedEmail(id, email, eventTimestamp);
     }
 }

@@ -1,6 +1,7 @@
 package de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities;
 
 import de.tobiasblaschke.eventsource.sample.domain.User;
+import de.tobiasblaschke.eventsource.sample.events.EventFactory;
 import de.tobiasblaschke.eventsource.sample.events.UserDeleted;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -28,7 +29,7 @@ public class JpaUserDeleted extends AbstractJpaUserEvent {
     }
 
     @Override
-    public UserDeleted unbox() {
-        return new UserDeleted(id, eventTimestamp);
+    public UserDeleted unbox(EventFactory factory) {
+        return factory.userDeleted(id, eventTimestamp);
     }
 }

@@ -1,6 +1,7 @@
 package de.tobiasblaschke.eventsource.scaffolding.impl;
 
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
+import de.tobiasblaschke.eventsource.scaffolding.InconsistencyService;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
 import de.tobiasblaschke.eventsource.scaffolding.events.Snapshot;
 
@@ -17,10 +18,12 @@ import java.util.stream.Stream;
  *  @param <P> Type of the DTO attached to the event (like a User)
  */
 public class EventSourceService<I, P> {
-    final EventStore<I, P> store;
+    private final EventStore<I, P> store;
+    private final InconsistencyService inconsistencies;
 
-    public EventSourceService(EventStore<I, P> store) {
+    public EventSourceService(EventStore<I, P> store, InconsistencyService inconsistencies) {
         this.store = store;
+        this.inconsistencies = inconsistencies;
     }
 
     public Optional<P> get(final I id) {
@@ -54,6 +57,10 @@ public class EventSourceService<I, P> {
 
     public EventStore<I, P> getStore() {
         return store;
+    }
+
+    public InconsistencyService getInconsistencies() {
+        return inconsistencies;
     }
 }
 

@@ -11,23 +11,24 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Deprecated
 @Entity
 public class JpaUserEvent {
     private enum EventType {
-        USER_CREATED(UserCreated.class, jpaUser -> new UserCreated(jpaUser.getUserChanges(), jpaUser.eventTimestamp)),
-        USER_DELETED(UserDeleted.class, jpaUser -> new UserDeleted(jpaUser.getUserChanges(), jpaUser.eventTimestamp)),
-        USER_CHANGED_NAME(UserChangedName.class, jpaUserEvent -> new UserChangedName(jpaUserEvent.userId, jpaUserEvent.surname, jpaUserEvent.givenName, jpaUserEvent.eventTimestamp)),
-        USER_CHANGED_EMAIL(UserChangedEmail.class, jpaUserEvent -> new UserChangedEmail(jpaUserEvent.userId, jpaUserEvent.email, jpaUserEvent.eventTimestamp));
+        USER_CREATED(UserCreated.class, (jpaUser, factory) -> factory.userCreated(jpaUser.getUserChanges(), jpaUser.eventTimestamp)),
+        USER_DELETED(UserDeleted.class, (jpaUser, factory) -> factory.userDeleted(jpaUser.userId, jpaUser.eventTimestamp)),
+        USER_CHANGED_NAME(UserChangedName.class, (jpaUserEvent, factory) -> factory.userChangedName(jpaUserEvent.userId, jpaUserEvent.surname, jpaUserEvent.givenName, jpaUserEvent.eventTimestamp)),
+        USER_CHANGED_EMAIL(UserChangedEmail.class, (jpaUserEvent, factory) -> factory.userChangedEmail(jpaUserEvent.userId, jpaUserEvent.email, jpaUserEvent.eventTimestamp));
 
         private final Class<? extends AbstractUserEvent> eventType;
         private static final Map<Class<? extends AbstractUserEvent>, EventType> byClass = Arrays.stream(values())
                 .collect(Collectors.toMap(item -> item.getEventType(), item -> item));
-        private final Function<JpaUserEvent, ? extends AbstractUserEvent> mapper;
+        private final BiFunction<JpaUserEvent, EventFactory, ? extends AbstractUserEvent> mapper;
 
-        <T extends AbstractUserEvent> EventType(final Class<T> eventType, Function<JpaUserEvent, T> mapper) {
+        <T extends AbstractUserEvent> EventType(final Class<T> eventType, BiFunction<JpaUserEvent, EventFactory, T> mapper) {
             this.eventType = eventType;
             this.mapper = mapper;
         }
@@ -40,8 +41,8 @@ public class JpaUserEvent {
             return eventType;
         }
 
-        public <T extends AbstractUserEvent> T map(final JpaUserEvent jpaUserEvent) {
-            return (T) mapper.apply(jpaUserEvent);
+        public <T extends AbstractUserEvent> T map(final JpaUserEvent jpaUserEvent, EventFactory factory) {
+            return (T) mapper.apply(jpaUserEvent, factory);
         }
     }
 
@@ -81,9 +82,9 @@ public class JpaUserEvent {
         this.email = storeMe.getEmail();
     }
 
-    public <T extends AbstractUserEvent> T getEvent(final Class<T> type) {
+    public <T extends AbstractUserEvent> T getEvent(final Class<T> type, EventFactory factory) {
         Preconditions.checkArgument(type.isAssignableFrom(eventType.getEventType()));
-        return eventType.map(this);
+        return eventType.map(this, factory);
     }
 
     protected User getUserChanges() {

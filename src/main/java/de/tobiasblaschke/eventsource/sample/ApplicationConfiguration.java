@@ -9,14 +9,19 @@ import de.tobiasblaschke.eventsource.sample.persistence.inmemory.InvoiceStoreInM
 import de.tobiasblaschke.eventsource.sample.persistence.inmemory.OrderStoreInMemory;
 import de.tobiasblaschke.eventsource.sample.persistence.sql.JpaConnection;
 import de.tobiasblaschke.eventsource.sample.service.InvoicingService;
+import de.tobiasblaschke.eventsource.scaffolding.impl.ThrowingInconsistencyService;
 import de.tobiasblaschke.eventsource.sample.service.UserService;
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
+import de.tobiasblaschke.eventsource.scaffolding.InconsistencyService;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventStoreInMemory;
 import de.tobiasblaschke.eventsource.scaffolding.impl.ListenableEventStore;
 
 public interface ApplicationConfiguration {
     enum DefaultApplicationConfiguration implements ApplicationConfiguration {
         INSTANCE;
+
+        final InconsistencyService inconsistencies;
+        final EventFactory eventFactory;
 
         final ListenableEventStore dispatcher;
         final InvoiceStore invoices;
@@ -29,7 +34,9 @@ public interface ApplicationConfiguration {
         final InvoicingService invoiceService;
 
         DefaultApplicationConfiguration() {
-            final JpaConnection jpa = new JpaConnection();
+            this.inconsistencies = new ThrowingInconsistencyService();
+            this.eventFactory = new EventFactory(inconsistencies);
+            final JpaConnection jpa = new JpaConnection(eventFactory);
 
             this.invoices = new InvoiceStoreInMemory();
             this.orders = new OrderStoreInMemory();
@@ -37,10 +44,15 @@ public interface ApplicationConfiguration {
             this.products = new EventStoreInMemory<>(Product.class);
             this.deadLetter = new EventStoreInMemory<>(Object.class);
 
-            this.invoiceService = new InvoicingService(invoices, orders);
-            this.userService = new UserService(users, orders);
+            this.invoiceService = new InvoicingService(invoices, orders, inconsistencies);
+            this.userService = new UserService(users, orders, inconsistencies);
 
             this.dispatcher = buildWiring(invoices, orders, users, products, deadLetter, userService, invoiceService);
+        }
+
+        @Override
+        public InconsistencyService getInconsistencies() {
+            return inconsistencies;
         }
 
         public ListenableEventStore getDispatcher() {
@@ -88,6 +100,8 @@ public interface ApplicationConfiguration {
                 .deadLetter(deadLetter)
                 .build();
     }
+
+    InconsistencyService getInconsistencies();
 
     ListenableEventStore getDispatcher();
 

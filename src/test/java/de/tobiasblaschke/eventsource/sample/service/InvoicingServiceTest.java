@@ -25,12 +25,12 @@ public class InvoicingServiceTest extends TestBase {
     @Test
     public void invoicesShouldBeUnaffectedByPriceChanges() throws Exception {
         final State state = replay(
-                new UserCreated(john, onceUponATime),
-                new ProductAdded(coach, onceUponATime),
-                new Bought(john, coach, aDayLater),
-                new PriceChanged(coach.getId(), 52, twoDaysLater));
+                ef -> ef.userCreated(john, onceUponATime),
+                ef -> ef.productAdded(coach, onceUponATime),
+                ef -> ef.bought(john, coach, aDayLater),
+                ef -> ef.priceChanged(coach.getId(), 52, twoDaysLater));
 
-        final InvoicingService invoicing = new InvoicingService(state.getInvoices(), state.getOrders());
+        final InvoicingService invoicing = new InvoicingService(state.getInvoices(), state.getOrders(), state.getInconsistencies());
         final Invoice invoice = invoicing.createInvoice(john);
 
         assertEquals(50, invoice.getTotalInCents());
@@ -40,20 +40,20 @@ public class InvoicingServiceTest extends TestBase {
     public void invoicesShouldBeSentToTheLatestEmail() throws Exception {
         final String changedEmail = "foo@example.com";
         final State state = new State();
-        final InvoicingService invoicing = new InvoicingService(state.getInvoices(), state.getOrders());
+        final InvoicingService invoicing = new InvoicingService(state.getInvoices(), state.getOrders(), state.getInconsistencies());
 
         replay(state,
-                new UserCreated(john, onceUponATime),
-                new ProductAdded(coach, onceUponATime),
-                new Bought(john, coach, aDayLater)
+                ef -> ef.userCreated(john, onceUponATime),
+                ef -> ef.productAdded(coach, onceUponATime),
+                ef -> ef.bought(john, coach, aDayLater)
         );
 
         final Invoice invoice = invoicing.createInvoice(john);
         assertEquals(john.getEmail(), invoice.getEmail());
 
         replay(state,
-                new UserChangedEmail(john.getUserId(), changedEmail, twoDaysLater),
-                new InvoiceSent(invoice.getId(), invoice, Instant.now()));
+                ef -> ef.userChangedEmail(john.getUserId(), changedEmail, twoDaysLater),
+                ef -> ef.invoiceSent(invoice, Instant.now()));
 
         final List<Invoice> sentInvoices = state.getInvoices().byUser(john, Instant.MIN);
         assertEquals(1, sentInvoices.size());
@@ -63,15 +63,14 @@ public class InvoicingServiceTest extends TestBase {
     @Test
     public void shouldNotReactToEmailUpdatesAfterInvoiceWasSent() throws Exception {
         final State state = new State();
-        final InvoicingService invoicing = new InvoicingService(state.getInvoices(), state.getOrders());
-        final UUID invoiceId = UUID.randomUUID(); // TODO: Shouldn't be generated here
+        final InvoicingService invoicing = new InvoicingService(state.getInvoices(), state.getOrders(), state.getInconsistencies());
 
         replay(state,
-                new UserCreated(john, onceUponATime),
-                new ProductAdded(coach, onceUponATime),
-                new Bought(john, coach, aDayLater),
-                new InvoiceSent(invoiceId, invoicing.createInvoice(john), twoDaysLater),
-                new UserChangedEmail(john.getUserId(), "unreflected@example.com", twoDaysLater)
+                ef -> ef.userCreated(john, onceUponATime),
+                ef -> ef.productAdded(coach, onceUponATime),
+                ef -> ef.bought(john, coach, aDayLater),
+                ef -> ef.invoiceSent(invoicing.createInvoice(john), twoDaysLater),
+                ef -> ef.userChangedEmail(john.getUserId(), "unreflected@example.com", twoDaysLater)
         );
 
         final List<Invoice> sentInvoices = state.getInvoices().byUser(john, Instant.MIN);

@@ -1,6 +1,7 @@
 package de.tobiasblaschke.eventsource.integration;
 
 import de.tobiasblaschke.eventsource.sample.domain.User;
+import de.tobiasblaschke.eventsource.sample.events.EventFactory;
 import de.tobiasblaschke.eventsource.sample.events.UserChangedName;
 import de.tobiasblaschke.eventsource.sample.events.UserCreated;
 import de.tobiasblaschke.eventsource.sample.events.UserDeleted;
@@ -27,10 +28,11 @@ public class JpaPersistenceTest extends JpaTestBase {
 
     @Test
     public void shouldBeAbleToCrudAnUser() throws Exception {
+        final EventFactory ef = getEventFactory();
         replay(
-                new UserCreated(john, onceUponATime),
-                new UserChangedName(john.getUserId(), "Doe", "Jane", aDayLater),
-                new UserDeleted(john.getUserId(), twoDaysLater)
+                ef.userCreated(john, onceUponATime),
+                ef.userChangedName(john.getUserId(), "Doe", "Jane", aDayLater),
+                ef.userDeleted(john.getUserId(), twoDaysLater)
         );
 
         printTable("user");

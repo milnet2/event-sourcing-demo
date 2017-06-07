@@ -1,6 +1,7 @@
 package de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities;
 
 import de.tobiasblaschke.eventsource.sample.events.AbstractUserEvent;
+import de.tobiasblaschke.eventsource.sample.events.EventFactory;
 
 import javax.annotation.Nonnull;
 import javax.persistence.DiscriminatorColumn;
@@ -21,5 +22,5 @@ public abstract class AbstractJpaUserEvent extends AbstractJpaEvent<Integer> {
         super(id, eventTimestamp);
     }
 
-    public abstract AbstractUserEvent unbox();
+    public abstract AbstractUserEvent unbox(EventFactory factory);
 }

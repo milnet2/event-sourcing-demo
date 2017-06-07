@@ -2,6 +2,7 @@ package de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities;
 
 import com.google.common.base.Preconditions;
 import de.tobiasblaschke.eventsource.sample.domain.User;
+import de.tobiasblaschke.eventsource.sample.events.EventFactory;
 import de.tobiasblaschke.eventsource.sample.events.UserChangedName;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -38,10 +39,10 @@ public class JpaUserChangedName extends AbstractJpaUserEvent {
     }
 
     @Override
-    public UserChangedName unbox() {
+    public UserChangedName unbox(EventFactory factory) {
         Preconditions.checkNotNull(givenName);
         Preconditions.checkNotNull(surname);
 
-        return new UserChangedName(id, surname, givenName, eventTimestamp);
+        return factory.userChangedName(id, surname, givenName, eventTimestamp);
     }
 }

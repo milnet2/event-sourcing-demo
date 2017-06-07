@@ -4,6 +4,7 @@ import de.tobiasblaschke.eventsource.sample.domain.Product;
 import de.tobiasblaschke.eventsource.sample.domain.User;
 import de.tobiasblaschke.eventsource.sample.events.*;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventSourceService;
+import de.tobiasblaschke.eventsource.scaffolding.impl.PermissiveInconsistencyService;
 import de.tobiasblaschke.eventsource.test.TestBase;
 import org.junit.Test;
 
@@ -24,10 +25,10 @@ public class UserServiceTest extends TestBase {
     @Test
     public void shouldBePossibleToDeleteAUserBeforeItBoughtSomething() throws Exception {
         final State state = replay(
-                new UserCreated(john, onceUponATime),
-                new ProductAdded(coach, onceUponATime),
-                new UserDeleted(john, aDayLater));
-        final EventSourceService<Integer, User> users = new EventSourceService<>(state.getUsers());
+                ef -> ef.userCreated(john, onceUponATime),
+                ef -> ef.productAdded(coach, onceUponATime),
+                ef -> ef.userDeleted(john.getUserId(), aDayLater));
+        final EventSourceService<Integer, User> users = new EventSourceService<>(state.getUsers(), state.getInconsistencies());
 
         assertEquals(Optional.empty(), users.get(john.getUserId()));
     }
@@ -35,11 +36,12 @@ public class UserServiceTest extends TestBase {
     @Test
     public void shouldNotBePossibleToDeleteAUserAfterItBoughtSomething() throws Exception {
         final State state = replay(
-                new UserCreated(john, onceUponATime),
-                new ProductAdded(coach, onceUponATime),
-                new Bought(john, coach, aDayLater),
-                new UserDeleted(john, twoDaysLater));
-        final EventSourceService<Integer, User> users = new EventSourceService<>(state.getUsers());
+                new State(new PermissiveInconsistencyService()),
+                ef -> ef.userCreated(john, onceUponATime),
+                ef -> ef.productAdded(coach, onceUponATime),
+                ef -> ef.bought(john, coach, aDayLater),
+                ef -> ef.userDeleted(john.getUserId(), twoDaysLater));
+        final EventSourceService<Integer, User> users = new EventSourceService<>(state.getUsers(), state.getInconsistencies());
 
         assertEquals(Optional.of(john), users.get(john.getUserId()));
     }
@@ -47,9 +49,9 @@ public class UserServiceTest extends TestBase {
     @Test
     public void shouldBePossibleToChangeUsersName() throws Exception {
          final State state = replay(
-                new UserCreated(john, onceUponATime),
-                new UserChangedName(john.getUserId(), "Doe", "Jane", aDayLater));
-        final EventSourceService<Integer, User> users = new EventSourceService<>(state.getUsers());
+                ef -> ef.userCreated(john, onceUponATime),
+                ef -> ef.userChangedName(john.getUserId(), "Doe", "Jane", aDayLater));
+        final EventSourceService<Integer, User> users = new EventSourceService<>(state.getUsers(), state.getInconsistencies());
 
         assertEquals("Jane", users.get(john.getUserId()).get().getGivenName());
         assertEquals("jd@example.com", users.get(john.getUserId()).get().getEmail());

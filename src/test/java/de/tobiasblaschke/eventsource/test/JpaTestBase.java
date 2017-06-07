@@ -3,12 +3,15 @@ package de.tobiasblaschke.eventsource.test;
 import de.tobiasblaschke.eventsource.sample.ApplicationConfiguration;
 import de.tobiasblaschke.eventsource.sample.domain.Product;
 import de.tobiasblaschke.eventsource.sample.domain.User;
+import de.tobiasblaschke.eventsource.sample.events.EventFactory;
 import de.tobiasblaschke.eventsource.sample.persistence.inmemory.InvoiceStoreInMemory;
 import de.tobiasblaschke.eventsource.sample.persistence.inmemory.OrderStoreInMemory;
 import de.tobiasblaschke.eventsource.sample.persistence.sql.JpaConnection;
 import de.tobiasblaschke.eventsource.sample.service.InvoicingService;
+import de.tobiasblaschke.eventsource.scaffolding.impl.ThrowingInconsistencyService;
 import de.tobiasblaschke.eventsource.sample.service.UserService;
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
+import de.tobiasblaschke.eventsource.scaffolding.InconsistencyService;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventStoreInMemory;
 import de.tobiasblaschke.eventsource.scaffolding.impl.ListenableEventStore;
@@ -40,6 +43,9 @@ public abstract class JpaTestBase implements ApplicationConfiguration {
     protected static JdbcDatabaseTester dbUnit;
     protected static JpaConnection jpa;
 
+    protected static EventFactory eventFactory;
+    protected static InconsistencyService inconsistencies;
+
     protected static ListenableEventStore dispatcher;
     protected static InvoiceStoreInMemory invoices;
     protected static OrderStoreInMemory orders;
@@ -57,7 +63,9 @@ public abstract class JpaTestBase implements ApplicationConfiguration {
         em = emf.createEntityManager();
         dbUnit = new JdbcDatabaseTester("org.h2.Driver", "jdbc:h2:mem:test", "", "");
 
-        jpa = new JpaConnection(em);
+        inconsistencies = new ThrowingInconsistencyService();
+        eventFactory = new EventFactory(inconsistencies);
+        jpa = new JpaConnection(em, eventFactory);
 
         invoices = new InvoiceStoreInMemory();
         orders = new OrderStoreInMemory();
@@ -65,8 +73,8 @@ public abstract class JpaTestBase implements ApplicationConfiguration {
         products = new EventStoreInMemory<>(Product.class);
         deadLetter = new EventStoreInMemory<>(Object.class);
 
-        invoiceService = new InvoicingService(invoices, orders);
-        userService = new UserService(users, orders);
+        invoiceService = new InvoicingService(invoices, orders, inconsistencies);
+        userService = new UserService(users, orders, inconsistencies);
 
         dispatcher = ApplicationConfiguration.buildWiring(
                 invoices, orders, users, products, deadLetter,
@@ -162,5 +170,14 @@ public abstract class JpaTestBase implements ApplicationConfiguration {
 
     public UserService getUserService() {
         return userService;
+    }
+
+    public EventFactory getEventFactory() {
+        return eventFactory;
+    }
+
+    @Override
+    public InconsistencyService getInconsistencies() {
+        return inconsistencies;
     }
 }

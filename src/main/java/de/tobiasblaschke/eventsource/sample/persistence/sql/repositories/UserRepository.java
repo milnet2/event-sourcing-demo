@@ -1,10 +1,7 @@
 package de.tobiasblaschke.eventsource.sample.persistence.sql.repositories;
 
 import de.tobiasblaschke.eventsource.sample.domain.User;
-import de.tobiasblaschke.eventsource.sample.events.UserChangedEmail;
-import de.tobiasblaschke.eventsource.sample.events.UserChangedName;
-import de.tobiasblaschke.eventsource.sample.events.UserCreated;
-import de.tobiasblaschke.eventsource.sample.events.UserDeleted;
+import de.tobiasblaschke.eventsource.sample.events.*;
 import de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities.*;
 import de.tobiasblaschke.eventsource.scaffolding.EventStore;
 import de.tobiasblaschke.eventsource.scaffolding.events.Event;
@@ -21,9 +18,11 @@ import java.util.stream.Collectors;
 @ParametersAreNonnullByDefault
 public class UserRepository implements EventStore<Integer, User> {
     private final EntityManager em;
+    private final EventFactory eventFactory;
 
-    public UserRepository(EntityManager em) {
+    public UserRepository(EntityManager em, EventFactory eventFactory) {
         this.em = em;
+        this.eventFactory = eventFactory;
     }
 
     @Override
@@ -75,7 +74,7 @@ public class UserRepository implements EventStore<Integer, User> {
             return Collections.emptyList();
         } else {
             return boxedResults.stream()
-                    .map(AbstractJpaUserEvent::unbox)
+                    .map(abstractJpaUserEvent -> abstractJpaUserEvent.unbox(eventFactory))
                     .collect(Collectors.toList());
         }
     }

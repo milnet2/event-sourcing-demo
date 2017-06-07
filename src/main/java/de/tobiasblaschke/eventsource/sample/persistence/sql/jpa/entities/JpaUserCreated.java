@@ -2,6 +2,7 @@ package de.tobiasblaschke.eventsource.sample.persistence.sql.jpa.entities;
 
 import com.google.common.base.Preconditions;
 import de.tobiasblaschke.eventsource.sample.domain.User;
+import de.tobiasblaschke.eventsource.sample.events.EventFactory;
 import de.tobiasblaschke.eventsource.sample.events.UserCreated;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -42,12 +43,12 @@ public class JpaUserCreated extends AbstractJpaUserEvent {
     }
 
     @Override
-    public UserCreated unbox() {
+    public UserCreated unbox(EventFactory factory) {
         Preconditions.checkNotNull(givenName);
         Preconditions.checkNotNull(surname);
         Preconditions.checkNotNull(email);
 
         final User user = new User(id, givenName, surname, email);
-        return new UserCreated(user, eventTimestamp);
+        return factory.userCreated(user, eventTimestamp);
     }
 }

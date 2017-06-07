@@ -8,6 +8,7 @@ import de.tobiasblaschke.eventsource.sample.events.UserChangedEmail;
 import de.tobiasblaschke.eventsource.sample.persistence.InvoiceStore;
 import de.tobiasblaschke.eventsource.sample.persistence.OrderStore;
 import de.tobiasblaschke.eventsource.scaffolding.EventListener;
+import de.tobiasblaschke.eventsource.scaffolding.InconsistencyService;
 import de.tobiasblaschke.eventsource.scaffolding.impl.EventSourceService;
 
 import java.time.Instant;
@@ -16,11 +17,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class InvoicingService extends EventSourceService<UUID, Invoice> implements EventListener<UserChangedEmail> {
-    final InvoiceStore invoiceStore;
-    final OrderStore orderStore;
+    private final InvoiceStore invoiceStore;
+    private final OrderStore orderStore;
 
-    public InvoicingService(InvoiceStore invoiceStore, OrderStore orderStore) {
-        super(invoiceStore);
+    public InvoicingService(InvoiceStore invoiceStore, OrderStore orderStore, InconsistencyService inconsitencies) {
+        super(invoiceStore, inconsitencies);
         this.invoiceStore = invoiceStore;
         this.orderStore = orderStore;
     }
@@ -40,7 +41,7 @@ public class InvoicingService extends EventSourceService<UUID, Invoice> implemen
 
     @Override
     public void onEvent(UserChangedEmail event) {
-
+        // TODO: Disallow E-Mail changes to sent invoices
     }
 
     public List<Invoice> byUser(User user) { // TODO: Would we really request this kind of info through the service? ... rather through the store

@@ -15,6 +15,8 @@ Some info about the implementation:
     - Unfortunately, this way you can get a glimpse at wrong data
 * Snapshots are prepared, but not actually generated for now
 * Events are somewhat separate from actual payload data
+* Inconsistencies (i.e. due to eventual consistency) are sent to an
+    InconsistencyService
 
 ## Open questions / issues
 
@@ -26,8 +28,6 @@ Some info about the implementation:
 * The "DI" is a bit... nah... rudimentary
 * Performance could be improved: There are situations, where the complete
     log is fetched
-* A way of inconsistencies (due to eventual consistency) is required
-    - For example a change to a user, that has been deleted
 
 You may find additional thoughts regarding the implementation in the
 Wiki (https://github.com/milnet2/event-sourcing-demo/wiki).
